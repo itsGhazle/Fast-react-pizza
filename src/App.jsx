@@ -5,6 +5,7 @@ import Menu, { loader as menuLoader } from "./features/menu/Menu";
 import CreateOrder from "./features/order/CreateOrder";
 import Order from "./features/order/Order";
 import AppLayout from "./features/UI/AppLayout";
+import Error from "./features/UI/Error";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
         path: "menu",
         element: <Menu />,
         loader: menuLoader,
+        errorElement: <Error />,
       },
 
       { path: "order/new", element: <CreateOrder /> },
