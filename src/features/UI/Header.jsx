@@ -8,7 +8,7 @@ function Header() {
         Fast React Pizza Co.
       </Link>
       <SearchOrder />
-      <p>username</p>
+      {/* <p>username</p> */}
     </header>
   );
 }
