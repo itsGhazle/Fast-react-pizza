@@ -12,10 +12,10 @@ import UpdateItems from "../cart/UpdateItems";
 
 function MenuItem({ pizza }) {
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
-  const cart = useSelector(getCart);
   const dispatch = useDispatch();
   const currentQuantity = useSelector(getCurrentQuantity(id));
   const isInCart = currentQuantity > 0;
+
   function handleAddToCart() {
     dispatch(
       addNewItemToCart({

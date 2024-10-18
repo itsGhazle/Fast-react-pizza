@@ -11,12 +11,12 @@ function UpdateItems({ id }) {
   const currentQuantity = useSelector(getCurrentQuantity(id));
   return (
     <div className="flex items-center justify-between gap-2">
-      <Button type="round" onClick={() => dispatch(IncreaseItemQuantity(id))}>
-        +
+      <Button type="round" onClick={() => dispatch(decreaseItemQuantity(id))}>
+        -
       </Button>
       <p className="font-semibold">{currentQuantity}</p>
-      <Button type="round" onClick={() => decreaseItemQuantity(id)}>
-        -
+      <Button type="round" onClick={() => dispatch(IncreaseItemQuantity(id))}>
+        +
       </Button>
     </div>
   );
