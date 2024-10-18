@@ -145,7 +145,7 @@ export async function action({ request }) {
     ...data,
     priority: data.priority === "true",
     cart: JSON.parse(data.cart),
-    position: JSON.parse(data.position),
+    // position: [JSON.parse(data.position)],
   };
   console.log(order);
   const errors = {};

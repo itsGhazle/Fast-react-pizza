@@ -1,11 +1,21 @@
 // Test ID: IIDSAT
 
-import { useLoaderData } from "react-router-dom";
+import { useFetcher, useLoaderData, useLocation } from "react-router-dom";
 import { calcMinutesLeft, formatCurrency, formatDate } from "../utils/helpers";
+import OrderItem from "../order/OrderItem";
 import { getOrder } from "../services/apiRestaurant";
+import { useEffect } from "react";
 
 function Order() {
+  const location = useLocation();
+  console.log(location);
   const order = useLoaderData();
+  const fetcher = useFetcher();
+  console.log(fetcher.data);
+  useEffect(() => {
+    return fetcher.load(location.pathname);
+    // fetcher.load("/menu")
+  }, [fetcher, location.pathname]);
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
   const {
     id,
@@ -45,11 +55,19 @@ function Order() {
           (Estimated delivery: {formatDate(estimatedDelivery)})
         </p>
       </div>
-      {/* <ul className="dive-stone-200 divide-y border-b border-t">
+      <ul className="dive-stone-200 divide-y border-b border-t">
         {cart.map((item, index) => (
-          <CartItem item={item} key={index} />
+          <OrderItem
+            item={item}
+            key={index}
+            isLoadingIngredients={fetcher.state === "loading"}
+            ingredients={
+              fetcher?.data?.find((el) => el.id === item.pizzaId)
+                ?.ingredients ?? []
+            }
+          />
         ))}
-      </ul> */}
+      </ul>
       <div className="space-y-2 bg-stone-200 px-6 py-5">
         <p className="text-sm font-medium text-stone-600">
           Price pizza: {formatCurrency(orderPrice)}
