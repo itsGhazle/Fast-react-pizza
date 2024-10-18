@@ -2,9 +2,16 @@ import { useState } from "react";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { createOrder } from "../services/apiRestaurant";
 import Button from "../UI/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearCart, getCart, getTotalPrice } from "../cart/cartSlice";
-import { getUser } from "../user/userSlice";
+import {
+  fetchAddress,
+  getStatus,
+  getUserName,
+  selectAddress,
+  selectError,
+  selectPosition,
+} from "../user/userSlice";
 import EmptyCart from "../cart/EmptyCart";
 import store from "../../store";
 import { formatCurrency } from "../utils/helpers";
@@ -19,12 +26,20 @@ function CreateOrder() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const formError = useActionData();
-  const { name } = useSelector(getUser);
+  const name = useSelector(getUserName);
   const cart = useSelector(getCart);
+  const position = useSelector(selectPosition);
+  const error = useSelector(selectError);
+  const address = useSelector(selectAddress);
+  console.log(address);
+  const status = useSelector(getStatus);
+  const isLoadingPosition = status === "loading";
+
   const cartPrice = useSelector(getTotalPrice);
   const [withPriority, setWithPriority] = useState(false);
   const priorityPrice = withPriority ? 0.25 * cartPrice : 0;
   const totalPrice = cartPrice + priorityPrice;
+  const dispatch = useDispatch();
 
   if (!cart.length) return <EmptyCart />;
   return (
@@ -57,16 +72,38 @@ function CreateOrder() {
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
               type="text"
               name="address"
+              defaultValue={address}
               className="input w-full"
               required
             />
           </div>
+          {!position.latitude && !position.longitude && (
+            <span
+              className={`absolute right-1 ${isLoadingPosition && "bg-stone-400"}`}
+            >
+              <Button
+                type="small"
+                disabled={isLoadingPosition}
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch(fetchAddress());
+                }}
+              >
+                Get Position
+              </Button>
+            </span>
+          )}
+          {status === "error" && (
+            <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+              {error.message}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-4 px-4">
@@ -85,7 +122,12 @@ function CreateOrder() {
 
         <div className="px-4 py-3">
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <Button type="primary" disabled={isSubmitting}>
+          <input
+            type="hidden"
+            name="position"
+            value={position && JSON.stringify(position)}
+          />
+          <Button type="primary" disabled={isSubmitting || isLoadingPosition}>
             {isSubmitting
               ? "placing order"
               : ` Order now ${formatCurrency(totalPrice)}`}
@@ -103,6 +145,7 @@ export async function action({ request }) {
     ...data,
     priority: data.priority === "true",
     cart: JSON.parse(data.cart),
+    position: JSON.parse(data.position),
   };
   console.log(order);
   const errors = {};
