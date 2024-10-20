@@ -1,4 +1,4 @@
-# Fast React Pizza Co.
+# Fast React Pizza Co. 🍕
 
 A Simple Pizza Ordering App
 
@@ -29,21 +29,31 @@ Unique Order ID: Every order gets a unique ID, so you can easily look up your or
 # Pages
 
 Homepage: /
+
 Menu: /menu
+
 Cart: /cart
+
 Placing a new order: /order/new
+
 Looking up an order: /order/:orderID
 
 # State Management
 
 User: Global UI state (No accounts)
+
 Menu: Global remote state (Menu fetched from API)
+
 Cart: Global UI state
+
 Order: Global remote state (Fetched and submitted to API)
 
 # Technologies used
 
 Routing: React Router
+
 Styling: TailwindCSS
+
 Remote State Management: React Router
+
 UI State Management: Redux Toolkit
