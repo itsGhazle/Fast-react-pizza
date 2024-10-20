@@ -5,17 +5,18 @@ import { calcMinutesLeft, formatCurrency, formatDate } from "../utils/helpers";
 import OrderItem from "../order/OrderItem";
 import { getOrder } from "../services/apiRestaurant";
 import { useEffect } from "react";
+import UpdateOrder from "./UpdateOrder";
 
 function Order() {
-  const location = useLocation();
-  console.log(location);
+  // const location = useLocation();
+  // console.log(location);
   const order = useLoaderData();
   const fetcher = useFetcher();
   console.log(fetcher.data);
   useEffect(() => {
-    return fetcher.load(location.pathname);
-    // fetcher.load("/menu")
-  }, [fetcher, location.pathname]);
+    // return fetcher.load(location.pathname);
+    if (!fetcher.data && fetcher.state === "idle") fetcher.load("/menu");
+  }, [fetcher]);
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
   const {
     id,
@@ -81,6 +82,7 @@ function Order() {
           To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}
         </p>
       </div>
+      {!priority && <UpdateOrder order={order} />}
     </div>
   );
 }
